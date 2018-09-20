@@ -1,0 +1,116 @@
+---
+title: "p8105_hw1_yw3236"
+output: github_document
+author: "Yishan Wang"
+date: 2018-09-18
+---
+# Set Up
+
+First, I went to GitHub to create a new public repo named p8105_hw1_yw3236.
+
+Second, I created a local R project named p8105_hw1_yw3236 by using File > New Project > Version Control and providing the repo URL.
+
+Third, I created a .Rmd file named p8105_hw1_yw3236 by using File > New File > R Markdown File.
+
+Forth, I used `output: github_document` to render a .Rmd file to a .md file.
+
+# Problem 1
+
+Create a data frame comprised of:
+
+  * A random sample of size 10 from a uniform[0, 5] distribution
+  * A logical vector indicating whether elements of the sample are greater than 2
+  * A (length-10) character vector
+  * A (length-10) factor vector
+
+```{r set_up, include = FALSE}
+library(tidyverse)
+```
+
+```{r create r data frame}
+set.seed(1)
+
+df = tibble(
+  vec_numeric = runif(10, min = 0, max = 5),
+  vec_logical = c(vec_numeric > 2),
+  vec_char = c("I", "love", "data", "science", "very", "much", "it", "is", "so", "wonderful"),
+  vec_factor = c("yes", "yes", "yes", "no", "no", "no", "yes", "yes", "no", "no")
+)
+```
+
+Take the mean of each variable in the data frame.
+
+```{r take mean, warning = FALSE}
+mean(df$vec_numeric)
+mean(df$vec_logical)
+mean(df$vec_char)
+mean(df$vec_factor)
+```
+
+For calculating mean, numeric and logical variable work, but char and factor variable don't work. The reason is that numerical and logical variables can be transfered to numerical value, but char and factor variables can't be transfered to numerical value. After transfering to numerical value, R can calculate the mean of the variable.
+
+Convert variables from one type to another.
+
+```{r convert variable_1, warning = FALSE, results = 'hide'}
+as.numeric(df$vec_logical)
+as.numeric(df$vec_char) 
+as.numeric(df$vec_factor)
+```
+Only logical variable can be converted to numerical variable. Both char and factor variables are not able to be contered (NA).
+
+```{r convert variable_2, warning = FALSE}
+as.numeric(as.factor(df$vec_char))
+as.numeric(as.character(df$vec_factor))
+```
+
+Charactor variable can be converted from charactor to factor to numeric. 
+Factor variable can't be converted from factor to character to numeric.
+
+# Problem 2
+Create a new data frame.
+
+```{r create data frame}
+set.seed(1)
+
+df_plot = tibble(
+  x = rnorm(1000),
+  y = rnorm(1000),
+  vec_logical = c(x + y > 0),
+  vec_numeric = as.numeric(vec_logical),
+  vec_factor = as.factor(vec_logical)
+)
+```
+
+The size of the dataset is `r length(df_plot$x)`.
+
+The mean of x is `r mean(df_plot$x)`.
+
+The medican of x is `r median(df_plot$x)`.
+
+The proportion of cases for which the logical vector is `TURE` is `r mean(df_plot$vec_logical)`.
+
+The scatterplot of `y` vs `x`.
+
+```{r ggplot using vec_logical}
+ggplot(df_plot, aes(x = x, y = y, color = vec_logical)) + geom_point()
+ggsave("scatter_plot.pdf")
+```
+
+In the scatter plot, there is an abovious sperate line between blue and red data points. The line approximately follows y = - x. Red points and blue points distributed approximate symmetrically based on the line. The blue points indicate `TURE` and they are above the line y = - x. The red points indicate `FALSE` and they are below the line y = - x. 
+
+```{r ggplot using vec_numeric}
+ggplot(df_plot, aes(x = x, y = y, color = vec_numeric)) + geom_point()
+```
+
+In this scatter plot, there is an abovious sperate line between lighter and darker data points. The line approximately follows y = - x. Lighter points and darker points distributed approximate symmetrically based on the line. The lighter points indicate `1`, which is `TURE` in `vec_logical`. The darker points indicate `0`, which is `FALSE` in `vec_logical`.
+
+```{r ggplot using vec_factor}
+ggplot(df_plot, aes(x = x, y = y, color = vec_factor)) + geom_point()
+```
+
+In this scatter plot, there is an abovious sperate line between red and blue data points. The line approximately follows y = - x. Red points and blue points distributed approximate symmetrically based on the line. The red points indicate `FALSE`, which is `FALSE` in `vec_logical`. The darker points indicate `TRUE`, which is `TRUE` in `vec_logical`.
+
+
+
+
+
